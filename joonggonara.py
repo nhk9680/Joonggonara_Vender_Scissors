@@ -52,7 +52,7 @@ individual  = int(count[0])
 vender      = int(count[1])
 
 keywords    = ['S10', 'A50', 'A8']
-sign        = ['â†‘', 'â†—', 'â†’', 'â†˜', 'â†“', 'â†™', 'â†', 'â†–']
+sign        = ['?†‘', '?†—', '?†’', '?†˜', '?†“', '?†™', '?†', '?†–']
 
 title_tmp   = ' '
 author_tmp  = ' '
@@ -188,7 +188,11 @@ while True:
         t=0
 
         # telegram receive part
-        text = bot.getUpdates()[-1].message.text
+        # getUpdates() has 24 hours limit, so discard it when no message in 24h
+        try:
+            text = bot.getUpdates()[-1].message.text
+        except:
+            continue
 
         #check the command
         if text_tmp != text:
@@ -221,7 +225,7 @@ while True:
             print()
 
     now=time.gmtime(time.time())
-    print('{:d}ì‹œ {:d}ë¶„ {:d}ì´ˆ {:s}\t{:d} : {:d}\tê°œì¸: {:.2f}%\tì—…ì: {:.2f}%'\
+    print('{:d}?‹œ {:d}ë¶? {:d}ì´? {:s}\t{:d} : {:d}\tê°œì¸: {:.2f}%\t?—…?: {:.2f}%'\
         .format(now.tm_hour+9, now.tm_min, now.tm_sec, sign[t%8], \
             individual, vender, \
             individual/(individual+vender)*100, vender/(individual+vender)*100), end='\r')
