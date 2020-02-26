@@ -36,24 +36,29 @@ driver.get('https://gall.dcinside.com/mgallery/board/lists?id=chartanalysis')
 num_old = driver.find_element_by_xpath(
         '//*[@id="container"]/section[1]/article[2]/div[2]/table/tbody/tr[7]/td[1]').text
 
-t = 0
-while True:
-    # activation check
-    time.sleep(1)
+# bot.sendMessage(chat_id, "test")
+# sys.exit()
 
-    now = time.gmtime(time.time())
-    print('{:d}시 {:d}분 {:d}초 \t {:s}'.
-          format(now.tm_hour + 9, now.tm_min, now.tm_sec, sign[t % 8]), end='\r')
+try:
 
-    if t == 8:
-        t = 0
-    t += 1
+    t = 0
+    while True:
+        # activation check
+        time.sleep(1)
 
-    # gather info
+        now = time.gmtime(time.time())
+        print('{:d}시 {:d}분 {:d}초 \t {:s}'.
+              format(now.tm_hour + 9, now.tm_min, now.tm_sec, sign[t % 8]), end='\r')
 
-    driver.refresh()
+        if t == 8:
+            t = 0
+        t += 1
 
-    try:
+        # gather info
+
+        driver.refresh()
+
+
         num = driver.find_element_by_xpath(
             '//*[@id="container"]/section[1]/article[2]/div[2]/table/tbody/tr[7]/td[1]').text
         if num == num_old:
@@ -64,18 +69,23 @@ while True:
             '//*[@id="container"]/section[1]/article[2]/div[2]/table/tbody/tr[7]/td[4]').text
         title = driver.find_element_by_xpath(
             '//*[@id="container"]/section[1]/article[2]/div[2]/table/tbody/tr[7]/td[3]/a').text
-    except Exception as e:
-        print(e)
-        # exit
-        driver.close()
-        os.execvp(executable, args)
 
-    # check
-    for word in keywords:
-        if word in name:
-            for i in range(0, 5):
-                Beep(4186, 100)
 
-            link = 'https://gall.dcinside.com/mgallery/board/view/?id=chartanalysis&no=' + num + '&page=1'
-            print(title+"\n"+name+"\n"+link+"\n")
-            bot.sendMessage(chat_id=chat_id, text=title+"\n"+name+"\n"+link)
+        # check
+        for word in keywords:
+            if word in name:
+                for i in range(0, 5):
+                    Beep(4186, 100)
+
+                link = 'https://gall.dcinside.com/mgallery/board/view/?id=chartanalysis&no=' + num + '&page=1'
+                print("\n"+title+"\n"+name+"\n"+link+"\n")
+                bot.sendMessage(chat_id=chat_id, text=title+"\n"+name+"\n"+link)
+
+
+except Exception as e:
+    print('\n\n{:d}시 {:d}분 {:d}초 \t {:s}'.
+          format(now.tm_hour + 9, now.tm_min, now.tm_sec, sign[t % 8]), end='\n')
+    print(e)
+    # exit
+    driver.close()
+    os.execvp(executable, args)

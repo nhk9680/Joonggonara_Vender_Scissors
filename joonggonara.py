@@ -13,9 +13,14 @@ args = sys.argv[:]
 args.insert(0, sys.executable)
 
 #telegram
-my_token = '837339362:AAESYsiM7S5qRu4SBGYK-OLhrEgRtPWgDcA'
-bot         = telegram.Bot(my_token)
-chat_id     = bot.getUpdates()[-1].message.chat.id
+try:
+    my_token = '837339362:AAESYsiM7S5qRu4SBGYK-OLhrEgRtPWgDcA' # sender
+    bot         = telegram.Bot(my_token)
+    chat_id     = bot.getUpdates()[-1].message.chat.id # receiver
+except Exception as e:    
+    print(chat_id)
+    sys.exit()
+
 text_tmp    = bot.getUpdates()[-1].message.text
 
 #selenium.webdriver
@@ -29,7 +34,7 @@ driver = webdriver.Chrome(executable_path='D:/chromedriver.exe', options=options
 driver.implicitly_wait(1)
 
 def fopen_r(filename):
-    f=open(filename, 'r')
+    f=open(filename, 'r', encoding='UTF8')
     _list=[]
     while True:
         line=f.readline()
@@ -46,14 +51,19 @@ count       = fopen_r("count.txt")
 individual  = int(count[0])
 vender      = int(count[1])
 
-keywords    = ['V30', 'v30', 'G7', 'g7']
+keywords    = ['S10', 'A50', 'A8']
 sign        = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖']
 
 title_tmp   = ' '
 author_tmp  = ' '
 
 #get article index
-driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=10050146&search.menuid=424&search.boardtype=L')
+
+KT = str(424)
+SK = str(339)
+LG = str(425)
+
+driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=10050146&search.menuid='+SK+'&search.boardtype=L')
 driver.switch_to.frame('cafe_main')
 html = driver.page_source
 soup = BeautifulSoup(html, 'html.parser')
@@ -158,9 +168,9 @@ while True:
                 break
 
         if not vender_flag:
-            individual += 1        
+            individual += 1
             for keyword in keywords:
-                if (keyword in title):
+                if (keyword in title.upper()) or (keyword in title.lower()):
                     print('\n'+title)
                     for i in range(0, 5):
                         Beep(4186, 100)
