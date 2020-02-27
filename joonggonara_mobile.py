@@ -1,10 +1,17 @@
+# -*- coding:utf-8 -*-
+
 import os
 import sys
 import time
-from winsound import Beep
+try:
+    from winsound import Beep
+except ImportError:
+    def Beep(freq, duration):
+        os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+
 
 from selenium import webdriver
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 import telegram
 
 # args (for auto restart)
@@ -63,22 +70,9 @@ KT = str(424)
 SK = str(339)
 LG = str(425)
 
-driver.get('https://cafe.naver.com/ArticleList.nhn?search.clubid=10050146&search.menuid='+SK+'&search.boardtype=L')
-driver.switch_to.frame('cafe_main')
-html = driver.page_source
-soup = BeautifulSoup(html, 'html.parser')
+driver.get('https://m.cafe.naver.com/ca-fe/web/cafes/10050146/menus/'+SK)
 
 articleIndex    = 0
-while True:
-    try:
-        postnum=soup.select(
-            '#main-area > div:nth-child('+str(articleIndex)+') > table > tbody > tr:nth-child(1) > td.td_article > div.board-number > div').pop().text.strip()
-        print("Got it!")
-        break
-    except:
-        articleIndex+=1
-        continue
-
 # main
 
 postnum_before  = []
@@ -97,24 +91,13 @@ while True:
     author_after   = []    
 
     driver.refresh()
-    driver.switch_to.frame('cafe_main')
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-
+    
     try:
-        for i in range(1, 10+1):
-            postnum_current.append(
-                soup.select(
-                '#main-area > div:nth-child('+str(articleIndex)+') > table > tbody > tr:nth-child('+str(i)+') > td.td_article > div.board-number > div')
-                .pop().text.strip())
-            title_current.append(
-                soup.select(
-                '#main-area > div:nth-child('+str(articleIndex)+') > table > tbody > tr:nth-child('+str(i)+') > td.td_article > div.board-list > div > a')
-                .pop().text.strip())
-            author_current.append(
-                soup.select(
-                '#main-area > div:nth-child('+str(articleIndex)+') > table > tbody > tr:nth-child('+str(i)+') > td.td_name > div > table > tbody > tr > td > a')
-                .pop().text.strip())
+        for board in driver.find_elements_by_class_name('txt_area'):
+            postnum_current.append(board.get_attribute('href')[67:76])
+            title_current.append(board.find_element_by_class_name('tit').text)
+            author_current.append(board.find_element_by_class_name('ellip').text)
+       
     except Exception as e:
         print(e)
         bot.sendMessage(chat_id=chat_id, text=str(e))
