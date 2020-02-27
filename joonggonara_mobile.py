@@ -5,9 +5,11 @@ import sys
 import time
 try:
     from winsound import Beep
-except ImportError:
+    executable_path='D:/chromedriver.exe'
+except ImportError: #Not Windows, at Linux
     def Beep(freq, duration):
         os.system('play -nq -t alsa synth {} sine {}'.format(duration, freq))
+    executable_path='/usr/lib/chromium-browser/chromedriver'
 
 
 from selenium import webdriver
@@ -37,7 +39,7 @@ options.add_argument('window-size=1920x1080')
 options.add_argument('disable-gpu')
 options.add_argument('log-level=1')
 
-driver = webdriver.Chrome(executable_path='D:/chromedriver.exe', options=options)
+driver = webdriver.Chrome(executable_path=executable_path, options=options)
 driver.implicitly_wait(1)
 
 def fopen_r(filename):
