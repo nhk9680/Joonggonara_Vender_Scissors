@@ -75,6 +75,8 @@ KT = str(424)
 SK = str(339)
 LG = str(425)
 
+print("load URL...")
+
 driver.get('https://m.cafe.naver.com/ca-fe/web/cafes/10050146/menus/'+SK)
 
 articleIndex    = 0
@@ -96,6 +98,8 @@ while True:
     author_after   = []    
 
     driver.refresh()
+
+    print("get board info...")
     
     try:
         for board in driver.find_elements_by_class_name('txt_area'):
@@ -118,6 +122,8 @@ while True:
         title_after = title_current
         author_after = author_current
 
+    print("update...")
+
     for postnum, title, author in zip(postnum_current, title_current, author_current):
         if not (postnum in postnum_before):
 
@@ -131,9 +137,12 @@ while True:
     title_before = title_current
     author_before = author_current
 
+    print("vender check...")
+
     for postnum, title, author in zip(postnum_after, title_after, author_after):
         vender_flag = False
 
+        
         # check vender by title
         for word in blacklist:
             try:
@@ -147,7 +156,7 @@ while True:
                 bot.sendMessage(chat_id=chat_id, \
                     text=str(e)+"\n\n"+"word: "+word+"\ntitle: "+title)
                 break
-
+        
         #check vender by author
         for user in block_user:
             if user in author:
